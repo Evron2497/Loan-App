@@ -1,0 +1,25 @@
+
+# Dependencies
+node_modules/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Customer data and databases
+data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+npm-debug.log*
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db

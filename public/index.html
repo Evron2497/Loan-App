@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#123b36"><title>Okoa Comrades — Responsible Digital Lending</title>
+<link rel="stylesheet" href="/styles.css">
+<style>
+.review-card{margin-top:18px;padding:20px;border:1px solid #dce8e4;border-radius:16px;background:#fff}
+.review-card h3{margin:0 0 8px}.review-progress{height:8px;margin:18px 0 9px;overflow:hidden;border-radius:99px;background:#e8efec}.review-progress-bar{width:0;height:100%;background:#16745e;border-radius:inherit;transition:width .2s ease}
+.result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}.result-item{padding:13px;border-radius:11px;background:#f2f7f5;overflow-wrap:anywhere}.result-item small{display:block;margin-bottom:6px;color:#5c716a}.result-status,.disclosure{padding:13px;border-radius:10px;background:#f3f7f5;line-height:1.6}.result-status.success{background:#e7f7ed;color:#17633b}.result-status.warning{background:#fff5df;color:#805515}.result-status.error{background:#fff0ef;color:#982e2e}
+.modal-backdrop{display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;padding:16px;background:rgba(9,28,25,.72);overflow-y:auto}.modal-backdrop.open{display:flex}.modal-card{width:min(100%,490px);max-height:90vh;overflow-y:auto;padding:24px;border-radius:18px;background:#fff;box-shadow:0 25px 90px rgba(0,0,0,.25)}.modal-card h2{margin-top:0}.modal-card .consent{display:flex;gap:9px;margin:16px 0}.modal-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.modal-actions .btn{flex:1;min-width:145px}.disclosure{margin-top:14px;font-size:.92rem}
+@media(max-width:600px){.result-grid{grid-template-columns:1fr}.modal-card{padding:18px}.modal-actions{flex-direction:column}.modal-actions .btn{width:100%}}
+@media(prefers-reduced-motion:reduce){.review-progress-bar{transition:none}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#" aria-label="Okoa Comrades home"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 64 64" role="img"><circle cx="29" cy="29" r="23" fill="none" stroke="currentColor" stroke-width="7"/><path d="M43 48c-5 7-13 11-22 10 7-1 11-5 15-11 4-6 8-10 15-10-1 5-4 8-8 11Z" fill="currentColor"/></svg></span><span class="brand-copy"><strong>Okoa <b>Comrades</b></strong><small>SMARTER FINANCIAL ACCESS</small></span></a>
+  <nav class="topbar-right" aria-label="Account navigation"><button id="menuToggle" class="menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="appNavLinks"><span></span><span></span><span></span></button><div id="appNavLinks" class="topbar-links hidden" aria-label="Main navigation"><a href="#appView">⌂ <span>Dashboard</span></a><a href="#profilePanel">♟ <span>Profile</span></a><a href="#loanPanel">＋ <span>Apply</span></a><a href="#applicationsPanel">▤ <span>Applications</span></a></div><span id="modeTag" class="pill">· TECH-STAR ENTERPRISE</span><button id="logoutBtn" class="btn btn-ghost hidden">Log out</button></nav>
+</header>
+<main>
+<section id="authView" class="auth-layout">
+  <div class="hero">
+    <span class="eyebrow">BUILT FOR COMRADES</span><h1>Move forward.<br><em>Borrow responsibly.</em></h1>
+    <p>A transparent loan journey, designed for Comrades. Check a preliminary estimate, understand the fee, and track your application.</p>
+    <div class="hero-points"><span>✓ Clear 5% fee calculation</span><span>✓ KES 1,000–50,000 requested range</span><span>✓ Privacy-minded profile</span></div>
+  </div>
+  <div class="panel auth-panel">
+    <div class="tabs"><button class="tab active" data-tab="login">Sign in</button><button class="tab" data-tab="register">Create account</button></div>
+    <form id="loginForm" class="form">
+      <h2>Welcome back</h2><p class="muted">Sign in to manage your application.</p>
+      <label>Email address / admin login email<input name="email" type="email" autocomplete="username" required></label>
+      <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+      <button class="btn btn-primary full">Sign in <span>→</span></button>
+      <button id="showForgotPassword" type="button" class="btn btn-ghost full">Forgot password? Reset using SMS OTP</button>
+    </form>
+    <form id="registerForm" class="form hidden">
+      <h2>Create your account</h2><p class="muted">Use accurate details you can verify.</p>
+      <label>Full name<input name="name" autocomplete="name" minlength="2" required></label>
+      <label>Email address<input name="email" type="email" autocomplete="email" required></label>
+      <label>Kenyan mobile number<input name="phone" placeholder="0712345678" autocomplete="tel" required pattern="(\+?254|0)7[0-9]{8}"></label>
+      <label>Password <small>At least 10 characters</small><input name="password" type="password" minlength="10" autocomplete="new-password" required></label>
+      <label>Confirm password<input name="confirmPassword" type="password" minlength="10" autocomplete="new-password" required></label>
+      <button class="btn btn-primary full">Create account <span>→</span></button>
+    </form>
+
+    <form id="forgotPasswordForm" class="form hidden">
+      <h2>Reset your password</h2><p class="muted">We will send a one-time code to the mobile number registered to your account.</p>
+      <label>Registered Kenyan mobile number<input name="phone" type="tel" placeholder="0712345678" pattern="(\+?254|0)7[0-9]{8}" required></label>
+      <button class="btn btn-primary full">Send OTP <span>→</span></button>
+      <button id="backToLogin" type="button" class="btn btn-ghost full">Back to sign in</button>
+    </form>
+    <form id="resetPasswordForm" class="form hidden">
+      <h2>Enter OTP and new password</h2><p class="muted">Enter the six-digit code sent to your registered mobile number.</p>
+      <label>Registered Kenyan mobile number<input name="phone" type="tel" placeholder="0712345678" pattern="(\+?254|0)7[0-9]{8}" required></label>
+      <label>Six-digit OTP<input name="otp" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" required></label>
+      <label>New password <small>At least 10 characters</small><input name="password" type="password" minlength="10" autocomplete="new-password" required></label>
+      <label>Confirm new password<input name="confirmPassword" type="password" minlength="10" autocomplete="new-password" required></label>
+      <button class="btn btn-primary full">Reset password</button>
+      <button id="backToLoginFromReset" type="button" class="btn btn-ghost full">Back to sign in</button>
+    </form>
+    <div id="authMessage" class="message hidden"></div>
+  </div>
+</section>
+
+<section id="appView" class="hidden">
+  <div class="welcome"><div><span class="eyebrow">YOUR FINANCIAL SPACE</span><h1>Hello, <span id="userName">Comrade</span> 👋</h1><p class="muted">Complete your profile to request a quick loan assessment.</p></div><div class="user-chip"><span id="avatar">C</span><div><b id="userNameSmall">Customer</b><small id="userRole">Customer account</small></div></div></div>
+  <div id="adminBanner" class="notice hidden"><b>Administrator workspace</b><span>You can review applications below. Customer decisions must follow documented policy.</span></div>
+  <div class="stats-grid">
+    <article class="stat-card dark"><div class="stat-label">PRELIMINARY ESTIMATE</div><div id="eligibleAmount" class="stat-value">KES —</div><div id="eligibleNote" class="stat-note">Complete your profile</div><div class="stat-icon">↗</div></article>
+    <article class="stat-card"><div class="stat-label">5% ESTIMATED FEE</div><div id="feeAmount" class="stat-value">KES —</div><div class="stat-note">Shown separately from the loan</div><div class="stat-icon green">%</div></article>
+    <article class="stat-card"><div class="stat-label">APPLICATIONS</div><div id="applicationCount" class="stat-value">0</div><div class="stat-note">Including previous applications</div><div class="stat-icon">▤</div></article>
+  </div>
+  <div class="content-grid">
+    <section class="panel" id="profilePanel">
+      <div class="section-heading"><div><span class="eyebrow">STEP 1</span><h2>Your profile</h2><p class="muted">Information used for a preliminary affordability check.</p></div><span id="profileBadge" class="pill">INCOMPLETE</span></div>
+      <form id="profileForm" class="form form-grid">
+        <label>Full Kenyan national ID number <small>Enter the 7–8 digits printed on your ID.</small><input name="nationalIdNumber" inputmode="numeric" minlength="7" maxlength="8" pattern="[0-9]{7,8}" autocomplete="off" required placeholder="e.g. 12345678"></label>
+        <label>Date of birth<input name="dateOfBirth" type="date" required></label>
+        <label>County<input name="county" maxlength="80" placeholder="e.g. Nairobi" required></label>
+        <label>Residential address / estate / town<input name="residentialAddress" maxlength="240" required placeholder="Town, estate and area"></label>
+        <label>Education level<select name="educationLevel" required><option value="">Select level</option><option value="primary">Primary</option><option value="secondary">Secondary</option><option value="certificate">Certificate</option><option value="diploma">Diploma</option><option value="degree">Degree</option><option value="postgraduate">Postgraduate</option><option value="other">Other</option></select></label>
+        <label>Employment status<select name="employmentType" required><option value="">Select status</option><option value="employed">Employed</option><option value="self_employed">Self-employed / business</option><option value="student">Student</option><option value="casual">Casual / contract</option><option value="unemployed">Unemployed</option></select></label>
+        <label>Employer / business name (if applicable)<input name="employerName" maxlength="120" placeholder="Not required if not employed"></label>
+        <label>Time in current job / business (months)<input name="employmentMonths" type="number" min="0" max="1200" required value="0"></label>
+        <label>Number of dependants<input name="dependents" type="number" min="0" max="30" required value="0"></label>
+        <label>Loan purpose<select name="loanPurpose" required><option value="">Select purpose</option><option value="education">Education</option><option value="business">Business</option><option value="rent_housing">Rent / housing</option><option value="medical">Medical</option><option value="emergency">Emergency</option><option value="household">Household needs</option><option value="other">Other</option></select></label>
+        <label>Other monthly income (KES)<input name="otherIncome" type="number" min="0" max="100000000" required value="0"></label>
+        <label>Monthly income (KES)<input name="monthlyIncome" type="number" min="0" max="100000000" required></label>
+        <label>Monthly expenses (KES)<input name="monthlyExpenses" type="number" min="0" max="100000000" required></label>
+        <label>Monthly existing debt payments (KES)<input name="existingDebt" type="number" min="0" max="100000000" required></label>
+        <label>M-Pesa / payout phone<input name="payoutPhone" placeholder="0712345678" pattern="(\+?254|0)7[0-9]{8}" required></label>
+<label class="consent full-span">
+  <input type="checkbox" name="consent" required>
+  <span>
+    I consent to Okoa Comrades collecting, processing, and securely storing
+    the personal, contact, employment, and financial information I provide
+    for identity verification, affordability assessment, credit eligibility
+    evaluation, loan application processing, and related customer support.
+    I understand that my information will be handled in accordance with the
+    applicable privacy policy and data protection laws. I acknowledge that
+    I can review the privacy policy to understand how my data is used,
+    retained, protected, and how I may exercise my data protection rights.
+  </span>
+</label>
+        <button class="btn btn-primary full-span">Save profile <span>→</span></button>
+      </form>
+      <div id="profileMessage" class="message hidden"></div>
+    </section>
+    <section class="panel loan-panel" id="loanPanel">
+      <div class="section-heading"><div><span class="eyebrow">STEP 2</span><h2>Eligibility & loan request</h2><p id="stepTwoIntro" class="muted">Complete and save Step 1 to unlock your eligibility preview.</p></div><span class="loan-symbol">↗</span></div>
+      <div id="stepTwoLockNotice" class="notice small-notice"><b>Step 2 is locked</b><span>Save your profile in Step 1 first. Once saved, you can preview the preliminary amount you may qualify for.</span></div>
+      <form id="loanForm" class="form">
+        <label>Requested amount <strong id="loanAmountLabel">KES 5,000</strong><input id="loanAmount" name="requestedAmount" type="range" min="1000" max="50000" step="500" value="5000"></label>
+        <div class="range-labels"><span>KES 1,000</span><span>KES 50,000</span></div>
+        <div class="fee-breakdown"><div><span>Requested amount</span><b id="breakAmount">KES 5,000</b></div><div><span>Proposed 5% fee</span><b id="breakFee">KES 250</b></div><div class="fee-total"><span>Amount + fee</span><b id="breakTotal">KES 5,250</b></div></div>
+        <label>Repayment period<select name="termDays"><option value="7">7 days</option><option value="14">14 days</option><option value="30" selected>30 days</option><option value="60">60 days</option><option value="90">90 days</option></select></label>
+       <label class="consent">
+  <input type="checkbox" name="acceptTerms" required>
+  <span>
+    I confirm that I have reviewed and accepted the loan terms, including
+    the 5% loan processing fee, the exact fee amount, the repayment schedule,
+    the total repayment amount, any applicable interest or additional charges,
+    and the fee refund policy. I understand that submitting this application
+    does not guarantee loan approval or disbursement, and I agree to the
+    disclosed terms before proceeding with my loan request.
+  </span>
+</label>
+        <button id="previewEligibilityBtn" type="button" class="btn btn-outline full" disabled>Preview eligibility <span>↗</span></button>
+        <button id="submitReviewBtn" class="btn btn-primary full" disabled>Submit application <span>→</span></button>
+      </form>
+      <div id="loanMessage" class="message hidden" aria-live="polite"></div>
+      <section id="reviewResult" class="review-card hidden" aria-live="polite">
+        <h3 id="reviewTitle">Application review</h3>
+        <p id="reviewDescription" class="muted">Preview your eligibility to see the preliminary amount.</p>
+        <div class="review-progress"><div id="reviewProgressBar" class="review-progress-bar"></div></div>
+        <small id="reviewProgressText" class="muted">Preparing review…</small>
+        <div id="qualificationDetails" class="result-grid hidden">
+          <div class="result-item"><small>Requested amount</small><strong id="resultRequested">KES —</strong></div>
+          <div class="result-item"><small>Preliminary estimate</small><strong id="resultEligible">KES —</strong></div>
+          <div class="result-item"><small>5% fee</small><strong id="resultFee">KES —</strong></div>
+          <div class="result-item"><small>Repayment period</small><strong id="resultTerm">—</strong></div>
+        </div>
+        <div id="qualificationStatus" class="result-status">Submit your application to begin.</div>
+      </section>
+      <div class="notice small-notice">
+  <b>⚠️ Important</b>
+  <span>
+    Okoa Comrades charges a 5% loan processing fee, calculated
+    based on the applicable loan amount and disclosed before payment.
+    For example, a KES 10,000 loan attracts a KES 500 processing fee.
+    Please review the loan agreement, total repayment amount, and
+    refund policy before making payment. Paying the processing fee
+    does not guarantee loan approval or disbursement. Any payment
+    request must be verified, and all applicable charges and terms
+    must be clearly disclosed before you proceed.
+  </span>
+</div>
+    </section>
+  </div>
+  <section class="panel history-panel" id="applicationsPanel">
+    <div class="section-heading"><div><span class="eyebrow">YOUR ACTIVITY</span><h2>Loan applications</h2></div><button id="refreshBtn" class="btn btn-outline">Refresh ↻</button></div>
+    <div class="table-wrap"><table><thead><tr><th>Application</th><th>Requested</th><th>Estimate</th><th>Fee</th><th>Term</th><th>Status</th><th>Action</th></tr></thead><tbody id="applicationsBody"><tr><td colspan="7" class="empty">Sign in to view your applications.</td></tr></tbody></table></div>
+  </section>
+  <section id="adminSection" class="panel history-panel hidden">
+    <div class="section-heading"><div><span class="eyebrow">RESTRICTED ACCESS</span><h2>Admin review queue</h2><p class="muted">Review is auditable; never approve solely on the displayed estimate.</p></div></div>
+    <div id="adminStats" class="admin-stats"></div>
+    <div class="table-wrap"><table><thead><tr><th>Customer</th><th>Requested</th><th>Estimate</th><th>Fee</th><th>Term</th><th>Reason</th><th>Review</th></tr></thead><tbody id="adminApplicationsBody"></tbody></table></div>
+  </section>
+  <footer>Okoa Comrades · Prototype · <a href="/privacy.html">Privacy notice</a> · <a href="/terms.html">Terms & safeguards</a></footer>
+</section>
+<div id="withdrawModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="withdrawModalTitle">
+  <div class="modal-card">
+    <h2 id="withdrawModalTitle">Your preliminary assessment</h2>
+    <p id="withdrawModalIntro" class="muted">Review your preliminary estimate.</p>
+    <div class="result-grid">
+      <div class="result-item"><small id="withdrawAmountLabel">Preliminary eligible estimate</small><strong id="withdrawApprovedAmount">KES —</strong></div>
+      <div class="result-item"><small>5% fee</small><strong id="withdrawFee">KES —</strong></div>
+      <div class="result-item"><small>Amount after fee</small><strong id="withdrawNetAmount">KES —</strong></div>
+      <div class="result-item"><small>Repayment period</small><strong id="withdrawTerm">—</strong></div>
+    </div>
+<div class="disclosure">
+  <b>Important Loan Payment Disclosure</b><br>
+  Your loan application is subject to eligibility assessment and approval by Okoa Comrades. The loan processing fee is 5% of the applicable loan amount, and the exact fee, total repayment amount, repayment schedule, applicable interest, and refund policy must be disclosed before you make any payment. Paying a processing fee does not guarantee loan approval or disbursement. Please verify the payment request and amount before proceeding. Never share your M-Pesa PIN with anyone; enter it only in the official Safaricom STK Push prompt that you initiated and verified. If STK Push is unavailable.
+</div>
+    <label>Safaricom M-Pesa number for STK prompt<input id="paymentPhone" inputmode="tel" autocomplete="tel" placeholder="0712345678" pattern="(\+?254|0)7[0-9]{8}" required></label>
+<label class="consent">
+  <input id="withdrawConsent" type="checkbox" required>
+  <span>
+    I confirm that I have reviewed and accepted the exact 5% loan
+    processing fee shown above. I understand that, once my application
+    has been approved and all stated conditions have been met, payment
+    of the required fee guarantees loan disbursement in accordance with
+    the agreed loan terms and disbursement timeline.
+  </span>
+</label>
+    <div id="withdrawMessage" class="result-status warning" aria-live="polite">Live payment and disbursement are not configured.</div>
+    <div class="modal-actions"><button id="confirmWithdrawBtn" type="button" class="btn btn-primary" disabled>Request M-Pesa payment prompt</button><button id="cancelWithdrawBtn" type="button" class="btn btn-outline">Close</button></div>
+  </div>
+</div>
+<div id="toast" class="toast hidden" role="status"></div>
+</main>
+<script src="/app.js"></script>
+</body></html>
