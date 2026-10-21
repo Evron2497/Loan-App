@@ -28,8 +28,8 @@ app.use(express.json({ limit: "30kb" }));
 app.use(cookieParser());
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, limit: 250, standardHeaders: true, legacyHeaders: false }));
 
-const dbPath = process.env.DATABASE_PATH || "./data/okoa.sqlite";
-fs.mkdirSync(path.dirname(path.resolve(dbPath)), { recursive: true });
+const dbPath = "/tmp/okoa.sqlite";
+fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 const db = new Database(dbPath);
 db.pragma("journal_mode = WAL");
 db.pragma("foreign_keys = ON");
